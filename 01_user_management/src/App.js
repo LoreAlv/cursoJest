@@ -5,6 +5,7 @@ import { LoginPage } from "./pages/login-page/login-page";
 function App() {
     return (
         <div className="App">
+            <LoginPage />
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
                 <p>
@@ -14,7 +15,6 @@ function App() {
                     Learn React
                 </a>
             </header>
-            <LoginPage />
         </div>
     );
 }
