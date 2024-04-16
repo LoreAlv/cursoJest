@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "./login-schema";
 
 export const LoginPage = () => {
     const {
@@ -8,7 +10,7 @@ export const LoginPage = () => {
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm();
+    } = useForm({ resolver: yupResolver(loginSchema) });
 
     const onSubmit = (data) => console.log(data);
 
@@ -27,8 +29,8 @@ export const LoginPage = () => {
         <>
             <Typography component="h1">login</Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="Email" {...register("email", { required: true })} helperText={errors.email && "The email is required"} />
-                <TextField label="Password" {...register("password", { required: true })} helperText={errors.password && "The password is required"} />
+                <TextField label="Email" {...register("email", { required: true })} helperText={errors.email?.message} />
+                <TextField label="Password" {...register("password", { required: true })} helperText={errors.password?.message} />
                 <Button>Submit</Button>
             </form>
         </>

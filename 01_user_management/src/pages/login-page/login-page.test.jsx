@@ -1,6 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { LoginPage } from "./login-page";
 
+const getSubmitBtn = () => {
+    return screen.getByRole("button", { name: /submit/i });
+};
 describe("pruebas de login-page", () => {
     test("it should render login title", () => {
         render(<LoginPage />);
@@ -17,14 +20,14 @@ describe("pruebas de login-page", () => {
         //miramos que esté el campo password ignore-case
         expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
         //miramos que esté el botón submit ignore-case
-        expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+        expect(getSubmitBtn()).toBeInTheDocument();
     });
 
     test("should validate the inputs as required", async () => {
         render(<LoginPage />);
         //submit del form
         await act(() => {
-            fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
+            fireEvent.submit(getSubmitBtn());
         });
         //validar los errores
         // screen.debug();
