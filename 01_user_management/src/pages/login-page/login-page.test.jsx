@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { LoginPage } from "./login-page";
 
 describe("pruebas de login-page", () => {
@@ -20,10 +20,12 @@ describe("pruebas de login-page", () => {
         expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
     });
 
-    test("should validate the inputs as required", () => {
+    test("should validate the inputs as required", async () => {
         render(<LoginPage />);
         //submit del form
-        fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
+        await act(() => {
+            fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
+        });
         //validar los errores
         // screen.debug();
         expect(screen.getByText(/The email is required/i)).toBeInTheDocument();
