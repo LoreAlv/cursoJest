@@ -68,7 +68,7 @@ describe("pruebas de login-page", () => {
             fireEvent.submit(getSubmitBtn());
         });
         //validar los errores
-        screen.debug();
+        // screen.debug();
         expect(getSubmitBtn()).toBeDisabled();
     });
 });

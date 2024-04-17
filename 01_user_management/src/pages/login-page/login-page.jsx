@@ -3,8 +3,15 @@ import { Button, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "./login-schema";
+import axios from "axios";
+
+const loginService = async (email, password) => {
+    const response = await axios.post("/login", { email, password });
+};
 
 export const LoginPage = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -12,7 +19,11 @@ export const LoginPage = () => {
         formState: { errors },
     } = useForm({ resolver: yupResolver(loginSchema) });
 
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = async (data) => {
+        setIsLoading(true);
+        // console.log(data);
+        await loginService(data.email, data.password);
+    };
 
     // const handleSubmit = (event) => {
     //     event.preventDefault();
@@ -31,7 +42,7 @@ export const LoginPage = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField label="Email" {...register("email", { required: true })} helperText={errors.email?.message} />
                 <TextField label="Password" {...register("password", { required: true })} helperText={errors.password?.message} />
-                <Button>Submit</Button>
+                <Button disabled={isLoading}>Submit</Button>
             </form>
         </>
     );
