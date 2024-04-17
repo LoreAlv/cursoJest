@@ -56,4 +56,19 @@ describe("pruebas de login-page", () => {
         // screen.debug();
         expect(screen.getByText(/The email is not valid/i)).toBeInTheDocument();
     });
+
+    test("should disable submit button while fetching data", async () => {
+        render(<LoginPage />);
+        expect(getSubmitBtn()).not.toBeDisabled();
+        await act(() => {
+            //type valid email and pass
+            fireEvent.change(getEmailInput(), { target: { value: "a@la.com" } });
+            fireEvent.change(getPasswordInput(), { target: { value: "1234" } });
+            //submit del form
+            fireEvent.submit(getSubmitBtn());
+        });
+        //validar los errores
+        screen.debug();
+        expect(getSubmitBtn()).toBeDisabled();
+    });
 });
