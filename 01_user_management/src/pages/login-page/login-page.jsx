@@ -4,25 +4,29 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "./login-schema";
 import axios from "axios";
+import { useMutation } from "react-query";
 
 const loginService = async (email, password) => {
     const response = await axios.post("/login", { email, password });
+    console.log({ response });
 };
 
 export const LoginPage = () => {
-    const [isLoading, setIsLoading] = useState(false);
-
+    // const [isLoading, setIsLoading] = useState(false);
+    const mutation = useMutation(({ email, password }) => loginService(email, password));
     const {
         register,
         handleSubmit,
-        watch,
+        // watch,
         formState: { errors },
     } = useForm({ resolver: yupResolver(loginSchema) });
 
-    const onSubmit = async (data) => {
-        setIsLoading(true);
+    const onSubmit = async ({ email, password }) => {
+        // const onSubmit = async (data) => {
+        // setIsLoading(true);
         // console.log(data);
-        await loginService(data.email, data.password);
+        // await loginService(data.email, data.password);
+        mutation.mutate({ email, password });
     };
 
     // const handleSubmit = (event) => {
@@ -42,7 +46,7 @@ export const LoginPage = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField label="Email" {...register("email", { required: true })} helperText={errors.email?.message} />
                 <TextField label="Password" {...register("password", { required: true })} helperText={errors.password?.message} />
-                <Button disabled={isLoading}>Submit</Button>
+                <Button disabled={mutation.isLoading}>Submit</Button>
             </form>
         </>
     );

@@ -1,5 +1,6 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import { LoginPage } from "./login-page";
+import { renderWithProvider } from "../../mocks/renderWithProviders";
 
 const getSubmitBtn = () => {
     return screen.getByRole("button", { name: /submit/i });
@@ -15,14 +16,14 @@ const getPasswordInput = () => {
 
 describe("pruebas de login-page", () => {
     test("it should render login title", () => {
-        render(<LoginPage />);
+        renderWithProvider(<LoginPage />);
         // screen.debug();
         //miramos que esté el texto login ignore-case
         expect(screen.getByRole("heading", { name: /login/i })).toBeInTheDocument();
     });
 
     test("should render the form elements", () => {
-        render(<LoginPage />);
+        renderWithProvider(<LoginPage />);
         // screen.debug();
         //miramos que esté el campo email ignore-case
         expect(getEmailInput()).toBeInTheDocument();
@@ -33,7 +34,7 @@ describe("pruebas de login-page", () => {
     });
 
     test("should validate the inputs as required", async () => {
-        render(<LoginPage />);
+        renderWithProvider(<LoginPage />);
         //submit del form
         await act(() => {
             fireEvent.submit(getSubmitBtn());
@@ -45,7 +46,7 @@ describe("pruebas de login-page", () => {
     });
 
     test("should validate the email format", async () => {
-        render(<LoginPage />);
+        renderWithProvider(<LoginPage />);
         await act(() => {
             //type an invalid email
             fireEvent.change(getEmailInput(), { target: { value: "a" } });
@@ -58,7 +59,7 @@ describe("pruebas de login-page", () => {
     });
 
     test("should disable submit button while fetching data", async () => {
-        render(<LoginPage />);
+        renderWithProvider(<LoginPage />);
         expect(getSubmitBtn()).not.toBeDisabled();
         await act(() => {
             //type valid email and pass
