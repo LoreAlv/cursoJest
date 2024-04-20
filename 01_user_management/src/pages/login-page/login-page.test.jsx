@@ -72,4 +72,19 @@ describe("pruebas de login-page", () => {
         // screen.debug();
         expect(getSubmitBtn()).toBeDisabled();
     });
+
+    test("should show a loading indicator while fetching login", async () => {
+        renderWithProvider(<LoginPage />);
+        expect(screen.queryByRole("progressbar", { name: /loading/i })).not.toBeInTheDocument();
+        await act(() => {
+            //type valid email and pass
+            fireEvent.change(getEmailInput(), { target: { value: "a@la.com" } });
+            fireEvent.change(getPasswordInput(), { target: { value: "1234" } });
+            //submit del form
+            fireEvent.submit(getSubmitBtn());
+        });
+        //validar los errores
+        // screen.debug();
+        expect(await screen.findByRole("progressbar", { name: /loading/i })).toBeInTheDocument();
+    });
 });
