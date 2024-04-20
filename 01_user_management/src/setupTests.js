@@ -5,9 +5,12 @@
 import "@testing-library/jest-dom";
 import { queryClient } from "./mocks/renderWithProviders";
 
-beforeAll(() => {
+beforeEach(() => {
     //para limpiar cada test
     queryClient.clear();
+});
+
+beforeAll(() => {
     // server.listen()
 });
 
