@@ -4,20 +4,31 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
 import { queryClient } from "./mocks/renderWithProviders";
+import { server } from "./mocks/server";
 
-beforeEach(() => {
+// jest.mock("axios", () => require("../__mocks__/axios"));
+
+beforeEach(async () => {
     //para limpiar cada test
     queryClient.clear();
+    await queryClient.resetQueries();
+    // console.log("me ejecuto para limpiar");
 });
 
 beforeAll(() => {
-    // server.listen()
+    //para limpiar cada test
+    queryClient.clear();
+    server.listen();
 });
 
 afterEach(() => {
-    // server.resetHandlers()
+    //para limpiar cada test
+    queryClient.clear();
+    server.resetHandlers();
 });
 
 afterAll(() => {
-    // server.close()
+    //para limpiar cada test
+    queryClient.clear();
+    server.close();
 });

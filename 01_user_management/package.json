@@ -43,8 +43,11 @@
         ]
     },
     "jest": {
-        "transformIgnorePatterns": [
-            "/node_modules/(?!(axios)/)"
-        ]
+        "moduleNameMapper": {
+            "^axios$": "<rootDir>/__mocks__/axios.js"
+        }
+    },
+    "devDependencies": {
+        "msw": "^2.2.14"
     }
 }

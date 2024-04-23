@@ -1,8 +1,8 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LoginPage } from "./login-page";
-import { renderWithProvider } from "../../mocks/renderWithProviders";
+import { renderWithProviders } from "../../mocks/render-with-providers";
 import { QueryClient, QueryClientProvider } from "react-query";
-import axios from "axios";
+import userEvent from "@testing-library/user-event";
 
 const getSubmitBtn = () => {
     return screen.getByRole("button", { name: /submit/i });
@@ -25,15 +25,26 @@ describe("pruebas de login-page", () => {
         fireEvent.submit(getSubmitBtn());
     };
 
+        const logInUser = async (email = "test@example.com", password = "correct") => {
+        //type valid email and pass
+        userEvent.type(getEmailInput(),  email);
+        userEvent.type(getPasswordInput(), password);
+        //submit del form
+  await userEvent.click(getSubmitBtn())
+    };
+
+
+
+
     test("it should render login title", () => {
-        renderWithProvider(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         // screen.debug();
         //miramos que esté el texto login ignore-case
         expect(screen.getByRole("heading", { name: /login/i })).toBeInTheDocument();
     });
 
     test("should render the form elements", () => {
-        renderWithProvider(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         // screen.debug();
         //miramos que esté el campo email ignore-case
         expect(getEmailInput()).toBeInTheDocument();
@@ -44,7 +55,7 @@ describe("pruebas de login-page", () => {
     });
 
     test("should validate the inputs as required", async () => {
-        renderWithProvider(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         //submit del form
         await act(() => {
             fireEvent.submit(getSubmitBtn());
@@ -56,7 +67,7 @@ describe("pruebas de login-page", () => {
     });
 
     test("should validate the email format", async () => {
-        renderWithProvider(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         await act(() => {
             //type an invalid email
             fireEvent.change(getEmailInput(), { target: { value: "a" } });
@@ -68,7 +79,7 @@ describe("pruebas de login-page", () => {
         expect(screen.getByText(/The email is not valid/i)).toBeInTheDocument();
     });
 
-    test.only("should disable submit button while fetching data", async () => {
+    test("should disable submit button while fetching data", async () => {
         const queryClient = new QueryClient();
         render(
             <QueryClientProvider client={queryClient}>
@@ -80,12 +91,23 @@ describe("pruebas de login-page", () => {
         await logIn("lo@a.es", "correct");
 
         // screen.debug();
-        expect(axios.post).toHaveBeenCalled();
-        expect(getSubmitBtn()).toBeDisabled();
+        // no le sale de los webs ir
+        // expect(getSubmitBtn()).toBeDisabled();
+
     });
 
+    test('it should disable the submit button while is fetching', async () => {
+  renderWithProviders(<LoginPage />)
+  expect(getSubmitBtn()).not.toBeDisabled()
+  await userEvent.type(screen.getByLabelText(/email/i), 'john.doe@mail.com')
+  await userEvent.type(screen.getByLabelText(/password/i), '123456')
+  await userEvent.click(getSubmitBtn())
+
+  await waitFor(() => expect(getSubmitBtn()).toBeDisabled())
+})
+
     test("should show a loading indicator while fetching login", async () => {
-        renderWithProvider(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         expect(screen.queryByRole("progressbar", { name: /loading/i })).not.toBeInTheDocument();
         await logIn();
         //validar los errores
@@ -93,10 +115,11 @@ describe("pruebas de login-page", () => {
         expect(await screen.findByRole("progressbar", { name: /loading/i })).toBeInTheDocument();
     });
 
-    // test("should display 'unexpected error, please try again' when there is an error on the login", async () => {
-    //     renderWithProvider(<LoginPage />);
-    //     await logIn();
-
-    //     expect(await screen.findByText("unexpected error, please try again")).toBeInTheDocument();
-    // });
+    test("should display 'unexpected error, please try again' when there is an error on the login", async () => {
+        renderWithProviders(<LoginPage />);
+//provocar error
+        act( () => {logInUser('ala@a.es', 'error500')})
+        screen.debug()
+        expect(await screen.findByText("Unexpected error, please try again")).toBeInTheDocument();
+    });
 });
