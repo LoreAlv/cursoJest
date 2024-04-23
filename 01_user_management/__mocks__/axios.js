@@ -12,7 +12,7 @@ const axiosMock = {
                 } else {
                     reject(new Error("Login failed"));
                 }
-            }, 1000); // Delay de 30 segundos
+            }, 100); // Delay de 30 segundos
         });
     }),
 };
