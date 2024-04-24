@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Button, TextField, Typography } from "@mui/material";
-import { SubmitHandler, set, useForm } from "react-hook-form";
+import { Avatar, Box, Button, Container, TextField, Typography } from "@mui/material";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "./login-schema";
 import { useLoginMutation } from "./use-login-mutation";
 import { StyledLoadder } from "../../components/loader";
 import { Inputs } from "./login-page.interfaces";
 import axios from "axios";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export const LoginPage = () => {
     const [errorMessage, setErrorMessage] = useState('')
@@ -41,19 +42,58 @@ export const LoginPage = () => {
     console.log(mutation.isLoading, mutation.error, mutation.isError);
     return (
         <>
-            <Typography component="h1">login</Typography>
-            {mutation.isLoading && <StyledLoadder role="progressbar" aria-label="loading" />}
-            {mutation.error &&
-                <Typography component="h2">{errorMessage}</Typography>
+            <Container component="main" maxWidth="xs">
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Login
+                    </Typography>
 
-            }
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="Email" {...register("email", { required: true })} helperText={errors.email?.message} />
-                <TextField label="Password" {...register("password", { required: true })} helperText={errors.password?.message} />
-                <Button disabled={mutation.isLoading} type="submit">
-                    Submit
-                </Button>
-            </form>
+                    {mutation.isLoading && <StyledLoadder role="progressbar" aria-label="loading" />}
+                    {mutation.isError &&
+                        <Typography component="h2">{errorMessage}</Typography>
+
+                    }
+                    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Email"
+                            {...register('email', { required: true })}
+                            helperText={errors.email?.message}
+                            error={!!errors.email}
+                        />
+
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Password"
+                            type="password"
+                            {...register('password', { required: true })}
+                            helperText={errors.password?.message}
+                            error={!!errors.password}
+                        />
+                        <Button
+                            disabled={mutation.isLoading}
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Submit
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
         </>
     );
 };
