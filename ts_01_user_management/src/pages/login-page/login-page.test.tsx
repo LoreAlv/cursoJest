@@ -25,12 +25,12 @@ describe("pruebas de login-page", () => {
         fireEvent.submit(getSubmitBtn());
     };
 
-        const logInUser = async (email = "test@example.com", password = "correct") => {
+    const logInUser = async (email = "test@example.com", password = "correct") => {
         //type valid email and pass
-        userEvent.type(getEmailInput(),  email);
+        userEvent.type(getEmailInput(), email);
         userEvent.type(getPasswordInput(), password);
         //submit del form
-  await userEvent.click(getSubmitBtn())
+        await userEvent.click(getSubmitBtn())
     };
 
 
@@ -97,14 +97,14 @@ describe("pruebas de login-page", () => {
     });
 
     test('it should disable the submit button while is fetching', async () => {
-  renderWithProviders(<LoginPage />)
-  expect(getSubmitBtn()).not.toBeDisabled()
-  await userEvent.type(screen.getByLabelText(/email/i), 'john.doe@mail.com')
-  await userEvent.type(screen.getByLabelText(/password/i), '123456')
-  await userEvent.click(getSubmitBtn())
+        renderWithProviders(<LoginPage />)
+        expect(getSubmitBtn()).not.toBeDisabled()
+        await userEvent.type(screen.getByLabelText(/email/i), 'john.doe@mail.com')
+        await userEvent.type(screen.getByLabelText(/password/i), '123456')
+        await userEvent.click(getSubmitBtn())
 
-  await waitFor(() => expect(getSubmitBtn()).toBeDisabled())
-})
+        await waitFor(() => expect(getSubmitBtn()).toBeDisabled())
+    })
 
     test("should show a loading indicator while fetching login", async () => {
         renderWithProviders(<LoginPage />);
@@ -117,9 +117,17 @@ describe("pruebas de login-page", () => {
 
     test("should display 'unexpected error, please try again' when there is an error on the login", async () => {
         renderWithProviders(<LoginPage />);
-//provocar error
-        act( () => {logInUser('ala@a.es', 'error500')})
-        screen.debug()
+        //provocar error
+        act(() => { logInUser('error@error.es', '500') })
+        // screen.debug()
         expect(await screen.findByText("Unexpected error, please try again")).toBeInTheDocument();
+    });
+
+    test("should display 'The email or password are not correct' when there is an error on the login", async () => {
+        renderWithProviders(<LoginPage />);
+        //provocar error
+        act(() => { logInUser('error@error.es', '401') })
+        // screen.debug()
+        expect(await screen.findByText("The email or password are not correct")).toBeInTheDocument();
     });
 });

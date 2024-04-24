@@ -17,10 +17,10 @@ const loginService = async (email: string, password: string): Promise<void> =>
       email,
       password,
     });
-    console.log(response);    
+    // console.log(response);    
     return response.data;
   } catch (error) {
-    console.log(error);    
+    // console.log(error);    
     throw error; // Lanza el error para que sea manejado por useMutation
   }
 
