@@ -11,10 +11,10 @@ describe('pruebas de form.js', () => {
     ).toBeInTheDocument()
   })
 
-  test('should esist fields: name, size, type(electronic, furniture, clothing)', () => {
+  test('should exist fields: name, size, type(electronic, furniture, clothing)', () => {
     render(<Form />)
 
-    screen.debug()
+    // screen.debug()
     // existen los campos
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument()
@@ -26,5 +26,14 @@ describe('pruebas de form.js', () => {
     expect(screen.queryByText(/electronic/i)).toBeInTheDocument()
     expect(screen.queryByText(/furniture/i)).toBeInTheDocument()
     expect(screen.queryByText(/clothing/i)).toBeInTheDocument()
+  })
+
+  test('should exist submit button', () => {
+    render(<Form />)
+
+    // screen.debug()
+    // existen los campos
+
+    expect(screen.getByRole('button', {name: /submit/i})).toBeInTheDocument()
   })
 })

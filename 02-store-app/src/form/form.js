@@ -1,5 +1,5 @@
 import React from 'react'
-import {TextField, InputLabel, Select} from '@mui/material'
+import {TextField, InputLabel, Select, Button} from '@mui/material'
 
 function Form() {
   //   console.log('hola')
@@ -24,6 +24,7 @@ function Form() {
           <option value="furniture">Furniture</option>
           <option value="clothing">Clothing</option>
         </Select>
+        <Button>Submit</Button>
       </form>
     </>
   )
