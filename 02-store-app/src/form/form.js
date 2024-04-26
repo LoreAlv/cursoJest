@@ -15,12 +15,31 @@ function Form() {
     if (!type.value) formAux.type = 'The type is required'
     setFormErrors(formAux)
   }
+
+  const handleBlur = event => {
+    const {name, value} = event.target
+    // console.log({name, value, event})
+    setFormErrors({
+      ...formErrors,
+      [name]: value?.length ? '' : `The ${name} is required`,
+    })
+  }
   return (
     <>
       <h1>Create product</h1>
       <form onSubmit={handleSubmit}>
-        <TextField label="name" id="name" helperText={formErrors.name} />
-        <TextField label="size" id="size" helperText={formErrors.size} />
+        <TextField
+          label="name"
+          id="name"
+          helperText={formErrors.name}
+          onBlur={handleBlur}
+        />
+        <TextField
+          label="size"
+          id="size"
+          helperText={formErrors.size}
+          onBlur={handleBlur}
+        />
         <InputLabel htmlFor="type">Type</InputLabel>
         <Select
           native
@@ -30,13 +49,14 @@ function Form() {
           label="type"
           inputProps={{name: 'type', id: 'type'}}
           //   onChange={handleChange}
+          onBlur={handleBlur}
         >
           <option value="" aria-label="none" />
           <option value="electronic">Electronic</option>
           <option value="furniture">Furniture</option>
           <option value="clothing">Clothing</option>
         </Select>
-        {formErrors.type.length && <p>{formErrors.type}</p>}
+        {formErrors.type.length !== 0 && <p>{formErrors.type}</p>}
         <Button type="submit">Submit</Button>
       </form>
     </>

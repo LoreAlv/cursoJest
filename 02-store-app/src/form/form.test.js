@@ -1,5 +1,5 @@
 import React from 'react'
-import {fireEvent, render, screen, waitFor} from '@testing-library/react'
+import {fireEvent, render, screen} from '@testing-library/react'
 import Form from './form'
 
 const getSubmitButton = () => screen.getByRole('button', {name: /submit/i})
@@ -45,17 +45,45 @@ describe('pruebas de  carga de form.js', () => {
 
 describe('when the form is submited', () => {
   test('should show "The [field name] is required" if the field is empty', () => {
-    // The [field name] is required
     render(<Form />)
     expect(screen.queryByText(/the name is required/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/the size is required/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/the type is required/i)).not.toBeInTheDocument()
 
     fireEvent.click(getSubmitButton())
-    screen.debug()
+    // screen.debug()
 
     expect(screen.queryByText(/the name is required/i)).toBeInTheDocument()
     expect(screen.queryByText(/the size is required/i)).toBeInTheDocument()
+    expect(screen.queryByText(/the type is required/i)).toBeInTheDocument()
+  })
+})
+
+describe('when the user blurs a field that is empty', () => {
+  test('should display the required message for name field', () => {
+    render(<Form />)
+    expect(screen.queryByText(/the name is required/i)).not.toBeInTheDocument()
+
+    fireEvent.blur(getNameField(), {target: {name: 'name', value: ''}})
+    // screen.debug()
+    expect(screen.queryByText(/the name is required/i)).toBeInTheDocument()
+  })
+
+  test('should display the required message for size field', () => {
+    render(<Form />)
+    expect(screen.queryByText(/the size is required/i)).not.toBeInTheDocument()
+
+    fireEvent.blur(getSizeField(), {target: {name: 'size', value: ''}})
+    // screen.debug()
+    expect(screen.queryByText(/the size is required/i)).toBeInTheDocument()
+  })
+
+  test('should display the required message for type field', () => {
+    render(<Form />)
+    expect(screen.queryByText(/the type is required/i)).not.toBeInTheDocument()
+
+    fireEvent.blur(getTypeField(), {target: {name: 'type', value: ''}})
+    // screen.debug()
     expect(screen.queryByText(/the type is required/i)).toBeInTheDocument()
   })
 })
