@@ -2,10 +2,12 @@ import React, {useState} from 'react'
 import {TextField, InputLabel, Select, Button} from '@mui/material'
 
 function Form() {
+  const [isSaving, setIsSaving] = useState(false)
   const [formErrors, setFormErrors] = useState({name: '', size: '', type: ''})
 
   const handleSubmit = event => {
     event.preventDefault()
+    setIsSaving(true)
     const {name, size, type} = event.target.elements
     const formAux = {...formErrors}
     if (!name.value || name.value.trim().length === 0)
@@ -57,7 +59,9 @@ function Form() {
           <option value="clothing">Clothing</option>
         </Select>
         {formErrors.type.length !== 0 && <p>{formErrors.type}</p>}
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isSaving}>
+          Submit
+        </Button>
       </form>
     </>
   )

@@ -1,6 +1,17 @@
 import React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react'
+import {rest} from 'msw'
+import {setupServer} from 'msw/node'
 import Form from './form'
+
+const server = setupServer(
+  // Describe network behavior with request handlers.
+  // Tip: move the handlers into their own module and
+  // import it across your browser and Node.js setups!
+  rest.post('/login', ({req, res, ctx}) =>
+    res(ctx.json({token: 'mocked_user_token'})),
+  ),
+)
 
 const getSubmitButton = () => screen.getByRole('button', {name: /submit/i})
 const getNameField = () => screen.getByLabelText(/name/i)
@@ -85,5 +96,24 @@ describe('when the user blurs a field that is empty', () => {
     fireEvent.blur(getTypeField(), {target: {name: 'type', value: ''}})
     // screen.debug()
     expect(screen.queryByText(/the type is required/i)).toBeInTheDocument()
+  })
+})
+
+describe('when the user submits the form', () => {
+  // Enable request interception.
+  beforeAll(() => server.listen())
+
+  // Reset handlers so that each test could alter them
+  // without affecting other, unrelated tests.
+  afterEach(() => server.resetHandlers())
+
+  // Don't forget to clean up afterwards.
+  afterAll(() => server.close())
+
+  test('should disable the submit button until request is done', () => {
+    render(<Form />)
+    expect(getSubmitButton()).not.toBeDisabled()
+    fireEvent.click(getSubmitButton())
+    expect(getSubmitButton()).toBeDisabled()
   })
 })
