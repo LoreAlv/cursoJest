@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {TextField, InputLabel, Select, Button} from '@mui/material'
-import axios from 'axios'
+import {saveProduct} from '../services/productServices'
+
 function Form() {
   const [isSaving, setIsSaving] = useState(false)
   const [formErrors, setFormErrors] = useState({name: '', size: '', type: ''})
@@ -28,13 +29,9 @@ function Form() {
       size: size.value.trim(),
       type: type.value.trim(),
     })
-
-    await axios.post('http://localhost/products', {
-      params: JSON.stringify({}),
-    })
+    await saveProduct()
     setIsSaving(false)
   }
-
   const handleBlur = event => {
     const {name, value} = event.target
     console.log({name, value, event})
