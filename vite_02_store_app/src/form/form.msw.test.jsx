@@ -37,11 +37,11 @@ describe('when the user submits the form', () => {
   })
   test('should disable the submit button until request is done', async () => {
     //Así simulamos que se ejecuta el post pero no creamos el usuario nuevo
-    const spy = jest.spyOn(axios, 'post').mockReturnValue({
-      data: {
-        token: 'aklsdf',
-      },
-    })
+    // const spy = jest.spyOn(axios, 'post').mockReturnValue({
+    //   data: {
+    //     token: 'aklsdf',
+    //   },
+    // })
 
     // nock(host)
     //   .persist()
@@ -51,7 +51,7 @@ describe('when the user submits the form', () => {
 
     moxios.stubRequest('http://localhost/products', {
       status: CREATED_STATUS,
-      responseText: {token: 'mocked_user_token'},
+      responseText: {token: 'mocked_user_token_disabled'},
     })
     render(<Form />)
     expect(getSubmitButton()).not.toBeDisabled()
@@ -59,19 +59,32 @@ describe('when the user submits the form', () => {
     expect(getSubmitButton()).toBeDisabled()
     //ahora esperamos respuesta y debe activarse de nuevo
     await waitFor(() => expect(getSubmitButton()).not.toBeDisabled())
-    expect(spy).toHaveBeenCalledTimes(1)
+    // expect(spy).toHaveBeenCalledTimes(1)
   })
 
   test('should the form page must display the success message _“Product stored”_ and clean the fields values', async () => {
-    const spy = jest.spyOn(axios, 'post').mockReturnValue({
-      type: 'default',
-      status: 201,
-      ok: true,
-      statusText: 'OK',
-      body: {
-        token: 'aklsdf',
-      },
-    })
+    // const spy = jest.spyOn(axios, 'post').mockReturnValue({
+    //   type: 'default',
+    //   status: 201,
+    //   ok: true,
+    //   statusText: 'OK',
+    //   body: {
+    //     token: 'aklsdf',
+    //   },
+    // })
+
+    // moxios.stubRequest('http://localhost/products', {
+    //     status: CREATED_STATUS,
+    //     response: {token: 'mocked_user_token_product_ok'},
+    //   })
+
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent()
+      request.respondWith({
+        status: CREATED_STATUS,
+        response: {token: 'mocked_user_token_product_ok'},
+      })
+    }, 1000)
     render(<Form />)
     expect(getSubmitButton()).not.toBeDisabled()
     fireEvent.click(getSubmitButton())
@@ -79,6 +92,6 @@ describe('when the user submits the form', () => {
     await waitFor(() =>
       expect(screen.getByText(/product stored/i)).toBeInTheDocument(),
     )
-    expect(spy).toHaveBeenCalledTimes(1)
+    // expect(spy).toHaveBeenCalledTimes(1)
   })
 })
