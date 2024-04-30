@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
 import {TextField, InputLabel, Select, Button} from '@mui/material'
 import {saveProduct} from '../services/productServices'
+import {CREATED_STATUS} from '../consts/httpStatus'
 
 function Form() {
   const [isSaving, setIsSaving] = useState(false)
   const [formErrors, setFormErrors] = useState({name: '', size: '', type: ''})
-
+  const [isSuccess, setIsSuccess] = useState(false)
   const validateField = ({name, value}) => {
-    console.log({name, value})
+    // console.log({name, value})
     setFormErrors(p => ({
       ...p,
       [name]: value.length > 0 ? '' : `The ${name} is required`,
@@ -29,18 +30,23 @@ function Form() {
       size: size.value.trim(),
       type: type.value.trim(),
     })
-    await saveProduct()
+    const response = await saveProduct()
+    console.log(response)
+    if (response.status === CREATED_STATUS) {
+      setIsSuccess(true)
+    }
     setIsSaving(false)
   }
   const handleBlur = event => {
     const {name, value} = event.target
-    console.log({name, value, event})
+    // console.log({name, value, event})
     validateField({name, value: value.trim()})
-    console.log({formErrors})
+    // console.log({formErrors})
   }
   return (
     <>
       <h1>Create product</h1>
+      {isSuccess && <p>Product Stored</p>}
       <form onSubmit={handleSubmit}>
         <TextField
           label="name"
