@@ -5,42 +5,41 @@ function Form() {
   const [isSaving, setIsSaving] = useState(false)
   const [formErrors, setFormErrors] = useState({name: '', size: '', type: ''})
 
+  const validateField = ({name, value}) => {
+    console.log({name, value})
+    setFormErrors(p => ({
+      ...p,
+      [name]: value.length > 0 ? '' : `The ${name} is required`,
+    }))
+  }
+
+  const validateForm = ({name, size, type}) => {
+    validateField({name: 'name', value: name})
+    validateField({name: 'type', value: type})
+    validateField({name: 'size', value: size})
+  }
+
   const handleSubmit = async event => {
     event.preventDefault()
     setIsSaving(true)
     const {name, size, type} = event.target.elements
-    const formAux = {...formErrors}
-    if (!name.value || name.value.trim().length === 0)
-      formAux.name = 'The name is required'
-    if (!size.value || size.value.trim().length === 0)
-      formAux.size = 'The size is required'
-    if (!type.value) formAux.type = 'The type is required'
-    setFormErrors(formAux)
+    validateForm({
+      name: name.value.trim(),
+      size: size.value.trim(),
+      type: type.value.trim(),
+    })
 
     await axios.post('http://localhost/products', {
       params: JSON.stringify({}),
     })
-    // .then(response => {
-    //   console.log(response.data)
-    // })
-    // .catch(error => {
-    //   console.log(error)
-    // })
-
-    // await fetch('http://localhost:5173/products', {
-    //   method: 'POST',
-    //   body: JSON.stringify({}),
-    // })
     setIsSaving(false)
   }
 
   const handleBlur = event => {
     const {name, value} = event.target
-    // console.log({name, value, event})
-    setFormErrors({
-      ...formErrors,
-      [name]: value?.length ? '' : `The ${name} is required`,
-    })
+    console.log({name, value, event})
+    validateField({name, value: value.trim()})
+    console.log({formErrors})
   }
   return (
     <>
@@ -49,12 +48,14 @@ function Form() {
         <TextField
           label="name"
           id="name"
+          name="name"
           helperText={formErrors.name}
           onBlur={handleBlur}
         />
         <TextField
           label="size"
           id="size"
+          name="size"
           helperText={formErrors.size}
           onBlur={handleBlur}
         />
@@ -63,7 +64,7 @@ function Form() {
           native
           labelId="type"
           id="type"
-          value=""
+          // value=""
           label="type"
           inputProps={{name: 'type', id: 'type'}}
           //   onChange={handleChange}
