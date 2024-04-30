@@ -15,6 +15,12 @@ function Form() {
     }))
   }
 
+  const getFormValues = ({name, size, type}) => ({
+    name: name.value.trim(),
+    size: size.value.trim(),
+    type: type.value.trim(),
+  })
+
   const validateForm = ({name, size, type}) => {
     validateField({name: 'name', value: name})
     validateField({name: 'type', value: type})
@@ -25,12 +31,8 @@ function Form() {
     event.preventDefault()
     setIsSaving(true)
     const {name, size, type} = event.target.elements
-    validateForm({
-      name: name.value.trim(),
-      size: size.value.trim(),
-      type: type.value.trim(),
-    })
-    const response = await saveProduct()
+    validateForm(getFormValues({name, size, type}))
+    const response = await saveProduct(getFormValues({name, size, type}))
     console.log(response)
     if (response.status === CREATED_STATUS) {
       setIsSuccess(true)
