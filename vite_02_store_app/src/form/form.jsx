@@ -35,6 +35,7 @@ function Form() {
     const response = await saveProduct(getFormValues({name, size, type}))
     console.log(response)
     if (response.status === CREATED_STATUS) {
+      event.target.reset()
       setIsSuccess(true)
     }
     setIsSaving(false)

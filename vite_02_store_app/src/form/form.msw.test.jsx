@@ -79,5 +79,8 @@ describe('when the user submits the form', () => {
     await waitFor(() =>
       expect(screen.getByText(/product stored/i)).toBeInTheDocument(),
     )
+    expect(getNameField()).toHaveValue('')
+    expect(getSizeField()).toHaveValue('')
+    expect(getTypeField()).toHaveValue('')
   })
 })
