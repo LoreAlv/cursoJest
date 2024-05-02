@@ -116,4 +116,23 @@ describe('when the user submits the form', () => {
       ).toBeInTheDocument(),
     )
   })
+
+  test('In the not found service path, the form page must display the message _“Connection error, please try later”_', async () => {
+    moxios.stubRequest('http://localhost/products', {
+      status: 444,
+      statusText: 'Connection error, please try later',
+      responseText: {
+        message: 'Connection error, please try later',
+      },
+    })
+    render(<Form />)
+    expect(getSubmitButton()).not.toBeDisabled()
+    fireEvent.click(getSubmitButton())
+    // screen.debug()
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Connection error, please try later/i),
+      ).toBeInTheDocument(),
+    )
+  })
 })

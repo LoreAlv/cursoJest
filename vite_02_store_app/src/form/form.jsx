@@ -62,11 +62,19 @@ function Form() {
     setIsSaving(false)
   }
   const handleFetchError = e => {
-    if (e.status === ERROR_SERVER_STATUS) {
-      setErrorMessage('Unexpected error, please try again')
-    } else if (e.status === INVALID_REQUEST_STATUS) {
-      setErrorMessage(e.statusText)
+    let error = ''
+    switch (e.status) {
+      case ERROR_SERVER_STATUS:
+        error = 'Unexpected error, please try again'
+        break
+      case INVALID_REQUEST_STATUS:
+        error = e.statusText
+        break
+      default:
+        error = 'Connection error, please try later'
+        break
     }
+    setErrorMessage(error)
   }
 
   const handleBlur = event => {
