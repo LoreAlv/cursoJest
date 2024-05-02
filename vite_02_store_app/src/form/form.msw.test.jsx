@@ -93,4 +93,27 @@ describe('when the user submits the form', () => {
       ).toBeInTheDocument(),
     )
   })
+
+  test('In the invalid request path, the form page must display the error message _“The form is invalid, the fields [field1...fieldN] are required”_', async () => {
+    moxios.stubRequest('http://localhost/products', {
+      status: 400,
+      statusText:
+        'The form is invalid, the fields name, sizc, type are required',
+      responseText: {
+        message:
+          'The form is invalid, the fields name, sizc, type are required',
+      },
+    })
+    render(<Form />)
+    expect(getSubmitButton()).not.toBeDisabled()
+    fireEvent.click(getSubmitButton())
+    // screen.debug()
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          /The form is invalid, the fields name, sizc, type are required/i,
+        ),
+      ).toBeInTheDocument(),
+    )
+  })
 })

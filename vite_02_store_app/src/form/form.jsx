@@ -1,7 +1,11 @@
 import React, {useState} from 'react'
 import {TextField, InputLabel, Select, Button} from '@mui/material'
 import {saveProduct} from '../services/productServices'
-import {CREATED_STATUS, ERROR_SERVER_STATUS} from '../consts/httpStatus'
+import {
+  CREATED_STATUS,
+  ERROR_SERVER_STATUS,
+  INVALID_REQUEST_STATUS,
+} from '../consts/httpStatus'
 
 function Form() {
   const [isSaving, setIsSaving] = useState(false)
@@ -34,20 +38,37 @@ function Form() {
     setIsSaving(true)
     const {name, size, type} = event.target.elements
     validateForm(getFormValues({name, size, type}))
-    const response = await saveProduct(getFormValues({name, size, type}))
-      .then(r => r)
-      .catch(e => ({status: e}))
-    console.log(response)
-    if (response.status === CREATED_STATUS) {
-      event.target.reset()
-      setIsSuccess(true)
-      setErrorMessage('')
-    } else if (response.status === ERROR_SERVER_STATUS) {
-      //
-      setErrorMessage('Unexpected error, please try again')
+    try {
+      const response = await saveProduct(getFormValues({name, size, type}))
+        .then(r => r)
+        .catch(e => {
+          // console.log(e)
+          let res
+          if (e?.response?.status) {
+            res = e.response
+          } else res = {status: e}
+          // console.log(res)
+          throw res
+        })
+      console.log(response)
+      if (response.status === CREATED_STATUS) {
+        event.target.reset()
+        setIsSuccess(true)
+        setErrorMessage('')
+      }
+    } catch (e) {
+      handleFetchError(e)
     }
     setIsSaving(false)
   }
+  const handleFetchError = e => {
+    if (e.status === ERROR_SERVER_STATUS) {
+      setErrorMessage('Unexpected error, please try again')
+    } else if (e.status === INVALID_REQUEST_STATUS) {
+      setErrorMessage(e.statusText)
+    }
+  }
+
   const handleBlur = event => {
     const {name, value} = event.target
     // console.log({name, value, event})
