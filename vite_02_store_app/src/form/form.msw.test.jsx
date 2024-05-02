@@ -28,9 +28,7 @@ describe('when the user submits the form', () => {
           status: CREATED_STATUS,
         })
       } else {
-        return request.respondWith({
-          status: ERROR_SERVER_STATUS,
-        })
+        return request.reject(ERROR_SERVER_STATUS)
       }
     }, 1000)
   })
@@ -82,5 +80,17 @@ describe('when the user submits the form', () => {
     expect(getNameField()).toHaveValue('')
     expect(getSizeField()).toHaveValue('')
     expect(getTypeField()).toHaveValue('')
+  })
+
+  test('should In a server error, the form page must display the error message _“Unexpected error, please try again”_.', async () => {
+    render(<Form />)
+    expect(getSubmitButton()).not.toBeDisabled()
+    fireEvent.click(getSubmitButton())
+    // screen.debug()
+    await waitFor(() =>
+      expect(
+        screen.getByText(/unexpected error, please try again/i),
+      ).toBeInTheDocument(),
+    )
   })
 })

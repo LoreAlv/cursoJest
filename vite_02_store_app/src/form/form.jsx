@@ -1,12 +1,14 @@
 import React, {useState} from 'react'
 import {TextField, InputLabel, Select, Button} from '@mui/material'
 import {saveProduct} from '../services/productServices'
-import {CREATED_STATUS} from '../consts/httpStatus'
+import {CREATED_STATUS, ERROR_SERVER_STATUS} from '../consts/httpStatus'
 
 function Form() {
   const [isSaving, setIsSaving] = useState(false)
   const [formErrors, setFormErrors] = useState({name: '', size: '', type: ''})
   const [isSuccess, setIsSuccess] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
   const validateField = ({name, value}) => {
     // console.log({name, value})
     setFormErrors(p => ({
@@ -33,10 +35,16 @@ function Form() {
     const {name, size, type} = event.target.elements
     validateForm(getFormValues({name, size, type}))
     const response = await saveProduct(getFormValues({name, size, type}))
+      .then(r => r)
+      .catch(e => ({status: e}))
     console.log(response)
     if (response.status === CREATED_STATUS) {
       event.target.reset()
       setIsSuccess(true)
+      setErrorMessage('')
+    } else if (response.status === ERROR_SERVER_STATUS) {
+      //
+      setErrorMessage('Unexpected error, please try again')
     }
     setIsSaving(false)
   }
@@ -50,6 +58,7 @@ function Form() {
     <>
       <h1>Create product</h1>
       {isSuccess && <p>Product Stored</p>}
+      {errorMessage && <p>${errorMessage}</p>}
       <form onSubmit={handleSubmit}>
         <TextField
           label="name"
